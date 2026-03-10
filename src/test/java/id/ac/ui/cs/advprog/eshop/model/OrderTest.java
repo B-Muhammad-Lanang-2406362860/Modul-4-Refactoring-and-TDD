@@ -10,6 +10,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
+
 public class OrderTest {
     private List<Product> products;
 
@@ -29,12 +31,12 @@ public class OrderTest {
         this.products.add(product2);
     }
 
-    @Test 
+    @Test
     void testCreateOrderEmptyProduct() {
         this.products.clear();
         assertThrows(IllegalArgumentException.class, () -> {
-            Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594", 
-                this.products, 1708560000L, "Safira Sudrajat");
+            Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594",
+                    this.products, 1708560000L, "Safira Sudrajat");
         });
     }
 
@@ -51,22 +53,22 @@ public class OrderTest {
         assertEquals("31342159-9d9f-4ab0-879f-531a580a5594", order.getId());
         assertEquals(1708560000L, order.getOrderTime());
         assertEquals("Safira Sudrajat", order.getAuthor());
-        assertEquals("WAITING_PAYMENT", order.getStatus());
+        assertEquals(OrderStatus.WAITING_PAYMENT.getValue(), order.getStatus());
     }
 
     @Test
     void testCreateOrderSuccessStatus() {
         Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594",
-                this.products, 1708560000L, "Safira Sudrajat", "SUCCESS");
+                this.products, 1708560000L, "Safira Sudrajat", OrderStatus.SUCCESS.getValue());
 
-        assertEquals("SUCCESS", order.getStatus());
+        assertEquals(OrderStatus.SUCCESS.getValue(), order.getStatus());
     }
 
     @Test
     void testCreateOrderInvalidStatus() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594", 
-                this.products, 1708560000L, "Safira Sudrajat", "MEOW");
+            Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594",
+                    this.products, 1708560000L, "Safira Sudrajat", "MEOW");
         });
     }
 
@@ -81,9 +83,9 @@ public class OrderTest {
 
     @Test
     void testSetStatusToInvalidStatus() {
-        Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594", 
-            this.products, 1708560000L, "Safira Sudrajat");
-        
+        Order order = new Order("31342159-9d9f-4ab0-879f-531a580a5594",
+                this.products, 1708560000L, "Safira Sudrajat");
+
         assertThrows(IllegalArgumentException.class, () -> order.setStatus("MEOW"));
     }
 
