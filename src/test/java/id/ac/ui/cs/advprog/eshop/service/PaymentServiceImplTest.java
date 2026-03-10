@@ -3,9 +3,8 @@ package id.ac.ui.cs.advprog.eshop.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +25,6 @@ import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +37,7 @@ public class PaymentServiceImplTest {
     PaymentRepository paymentRepository;    
     
     @Mock
-    OrderRepository orderRepository;
+    OrderServiceImpl orderService;
 
     private Map<String, String> bankTransferPayment1;
     private Map<String, String> bankTransferPayment2;
@@ -47,12 +45,9 @@ public class PaymentServiceImplTest {
     Product product1;
     Order order1;
     Payment payment1, payment2;
-    // private List<Payment> paymentData;
     
     @BeforeEach
     void setUp(){
-        paymentRepository = new PaymentRepository();
-
         bankTransferPayment1 = new HashMap<String,String>();
         bankTransferPayment1.put("bankName", "Mandiri");
         bankTransferPayment1.put("referenceCode", "PACIL123");
@@ -78,7 +73,8 @@ public class PaymentServiceImplTest {
 
     @Test
     void testAddPayment(){
-        doReturn(payment1).when(paymentRepository).save(payment1);
+        doReturn(null).when(paymentRepository).findById(order1.getId());
+        doReturn(payment1).when(paymentRepository).save(any(Payment.class));
 
         Payment payment = paymentServiceImpl.addPayment(order1, "BankTransfer", bankTransferPayment1);
 
@@ -104,7 +100,7 @@ public class PaymentServiceImplTest {
         payment1.setStatus("SUCCESS");
         doReturn(payment1).when(paymentRepository).save(any(Payment.class));
 
-        doNothing().when(orderRepository).save(any(Order.class));
+        doReturn(null).when(orderService).updateStatus(anyString(), anyString());
 
         Payment payment = paymentServiceImpl.setStatus(payment1, PaymentStatus.SUCCESS.getValue());
 
@@ -112,7 +108,7 @@ public class PaymentServiceImplTest {
         assertEquals(payment1.getMethod(), payment.getMethod());
         assertEquals(payment1.getPaymentData(), payment.getPaymentData());
         assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
-        verify(orderRepository, times(1)).save(any(Order.class));
+        verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 
     @Test 
@@ -121,7 +117,7 @@ public class PaymentServiceImplTest {
         payment1.setStatus("REJECTED");
         doReturn(payment1).when(paymentRepository).save(any(Payment.class));
 
-        doNothing().when(orderRepository).save(any(Order.class));
+        doReturn(null).when(orderService).updateStatus(anyString(), anyString());
 
         Payment payment = paymentServiceImpl.setStatus(payment1, PaymentStatus.REJECTED.getValue());
 
@@ -129,7 +125,7 @@ public class PaymentServiceImplTest {
         assertEquals(payment1.getMethod(), payment.getMethod());
         assertEquals(payment1.getPaymentData(), payment.getPaymentData());
         assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
-        verify(orderRepository, times(1)).save(any(Order.class));
+        verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 
     @Test 
@@ -139,7 +135,8 @@ public class PaymentServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> {
             paymentServiceImpl.setStatus(payment1, "ADALAHPOKOKNYA");
         });
-        verify(orderRepository, times(0)).save(any(Order.class));
+
+        verify(orderService, times(0)).updateStatus(anyString(), anyString());
     }
 
     @Test 
@@ -149,7 +146,7 @@ public class PaymentServiceImplTest {
         Payment payment = paymentServiceImpl.setStatus(payment1, PaymentStatus.REJECTED.getValue());
 
         assertNull(payment);
-        verify(orderRepository, times(0)).save(any(Order.class));
+        verify(orderService, times(0)).updateStatus(anyString(), anyString());
         verify(paymentRepository, times(0)).save(any(Payment.class));
     }
 
