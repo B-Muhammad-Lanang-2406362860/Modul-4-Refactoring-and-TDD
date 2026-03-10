@@ -72,7 +72,7 @@ public class PaymentRepositoryTest {
     void testFindById() {
         Payment payment1 = paymentData.get(0);
         paymentRepository.save(payment1);
-        Payment payment2 = paymentData.get(0);
+        Payment payment2 = paymentData.get(1);
         paymentRepository.save(payment2);
 
         Payment payment2FromRepository = paymentRepository.findById(payment2.getId());
@@ -96,7 +96,7 @@ public class PaymentRepositoryTest {
     void testFindAll() {
         Payment payment1 = paymentData.get(0);
         paymentRepository.save(payment1);
-        Payment payment2 = paymentData.get(0);
+        Payment payment2 = paymentData.get(1);
         paymentRepository.save(payment2);
 
         assertEquals(paymentRepository.findAll().size(), 2);
