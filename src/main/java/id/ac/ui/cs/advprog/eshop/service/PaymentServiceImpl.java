@@ -22,28 +22,52 @@ public class PaymentServiceImpl implements PaymentService {
     OrderServiceImpl orderService;
 
     @Override
-    public Payment addPayment(Order order, String method, Map<String, String> paymentData){
+    public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
         String paymentId = order.getId();
-        if (paymentRepository.findById(paymentId) != null){
-            Payment payment = new Payment(paymentId, method, paymentData);
-            paymentRepository.save(payment);
-            return payment;
+        if (paymentRepository.findById(paymentId) != null) {
+            return null;
         }
-        return null;
+
+        Payment payment = new Payment(paymentId, method, paymentData);
+        paymentRepository.save(payment);
+
+        if (isVoucherPayment(paymentData)) {
+            String voucherCode = paymentData.get("voucherCode");
+            if (isValidVoucherCode(voucherCode)){
+                payment = setStatus(payment, PaymentStatus.SUCCESS.getValue());
+            } else {
+                payment = setStatus(payment, PaymentStatus.REJECTED.getValue());
+            }
+        }
+
+        return payment;
+    }
+
+    private boolean isVoucherPayment(Map<String, String> paymentData) {
+        boolean haveOneKeyValuePair = (paymentData.size() == 1);
+        boolean haveVoucherCodeKey = (paymentData.get("voucherCode") != null);
+        return haveOneKeyValuePair && haveVoucherCodeKey;
+    }
+
+    private boolean isValidVoucherCode(String voucherCode){
+        if (voucherCode.length() != 16) return false;
+        if (!voucherCode.startsWith("ESHOP")) return false;
+        if (voucherCode.chars().filter(c -> Character.isDigit(c)).count() != 8) return false;
+        return true;
     }
 
     @Override
-    public Payment setStatus(Payment payment, String status){
-        if (paymentRepository.findById(payment.getId()) == null){
-            return null;
-        }
-        
-        if (status.equals(PaymentStatus.SUCCESS.getValue())){
+    public Payment setStatus(Payment payment, String status) {
+        // if (paymentRepository.findById(payment.getId()) == null) {
+        //     return null;
+        // }
+
+        if (status.equals(PaymentStatus.SUCCESS.getValue())) {
             payment.setStatus(PaymentStatus.SUCCESS.getValue());
             paymentRepository.save(payment);
             orderService.updateStatus(payment.getId(), OrderStatus.SUCCESS.getValue());
             return payment;
-        } else if (status.equals(PaymentStatus.REJECTED.getValue())){
+        } else if (status.equals(PaymentStatus.REJECTED.getValue())) {
             payment.setStatus(PaymentStatus.REJECTED.getValue());
             paymentRepository.save(payment);
             orderService.updateStatus(payment.getId(), OrderStatus.FAILED.getValue());
@@ -54,12 +78,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment getPayment(String paymentId){
+    public Payment getPayment(String paymentId) {
         return paymentRepository.findById(paymentId);
     }
 
     @Override
-    public List<Payment> getAllPayments(){
+    public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
 }
