@@ -1,41 +1,29 @@
-# 1️⃣ Modul 1 - Coding Standard
+# 4️⃣ Modul 4 - Coding Standard
 
 ## 📋 Reflection 01
 
-Prinsip *clean code* dan *secure coding* yang telah saya terapkan diantaranya tidak menulis *comment* yang redundant, tidak menumpuk kode tidak terpakai menjadi *comment*, serta menggunakan penamaan yang jelas dan deskriptif, seperti fungsi ```findProductById()```. Saya juga memperhatikan layout kode dengan memberikan indentasi sesuai dengan scope dan pemberian newline antar fungsi yang ada dalam satu class agar lebih mudah dibaca. Adapun perbaikan yang perlu saya lakukan adalah menambahkan validasi dan sanitasi pada input nama produk dan kuantitas produk. Selain itu, *Null validation* juga belum diterapkan pada fungsi ```create()```, ```edit()```, dan ```delete()``` pada ```ProductServiceImpl.java```. Beberapa fungsi pada ```ProductRepository.java``` juga memiliki tipe kembalian yang kurang tepat, seperti fungsi ```create()``` dan ```edit()``` yang mengembalikan object Product, padahal menurut saya lebih tepat menggunakan tipe void. Terakhir, format penamaan variabel saya masih belum konsisten seperti ```queryUUID```, ```currentProductUUID```, ```productUUID```, seharusnya diseragamkan untuk menghindari kesalahan di masa depan.
+1. **Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.**
 
+**Answer:** 
+- I think unit test is super useful especially when it comes to refactoring, because now I have a "safety net" and ensure that the refactor that I'm doing didn't just breaks anything. I can just easily refactor my code and go check the unit test, if it failed then I should fix the refactor code, if it's success, then I know I'm doing fine. Unit test give me instant feedback if I change certain things. It also restructure my workflow of coding. I usually just implement the logic first and make unit test after. But now, it's easier to make unit test first, because then I can implement the logic BASED ON the unit test. The unit test acts like a framework. I got a "guide" for what type should I return, what should I do if this element is not found, etc. The overall implementation got slightly faster with minimum confussion.  
+
+2. **You have created unit tests in Tutorial. Now reflect whether your tests have successfully followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you create more tests.**
+
+**Answer:** 
+First let's see what F.I.R.S.T principle is all about: 
+
+- **F**ast -> My unit test DOES execute quickly (under two seconds). This allows me to run it constantly and give me instant feedback for my implementation and refactoring.
+
+- **I**ndependent -> My unit test didn't rely on each other. I can run them in any order.
+
+- **R**epeatable -> My unit test run successfully on my local environment and on the github workflow ci/cd. 
+
+- **S**elf-validating -> My unit test can automatically detect success or failure with boolean outcome (using assertEqual, assertNull, assertTrue, etc.). 
+
+- **T**imely -> My unit test is written before I implement the logic code. Therefore I can easily follow the Red-Green-Refactor TDD cycle.
+
+Hence, I think my tests have successfully followed F.I.R.S.T principle. Only thing I'd do next time I create more tests is, I will make the skeleton first before making the unit test to prevent constant red dotted line appearing on my syntax (it's the error checking from my editor).
 
 ## 📋 Reflection 02
-1. Setelah menerapkan unit test, saya merasa lega dan cukup puas karena semua test yang saya buat berjalan dengan baik. Menurut saya, jumlah unit test yang ideal pada suatu class adalah 2-3 kali jumlah method yang ada pada class tersebut. Setiap method sebaiknya memiliki 2-3 unit test untuk menguji kasus benar maupun kasus salah (edge case/corner case). Untuk melakukan verifikasi apakah unit test sudah cukup, kita perlu membuat berbagai skenario yang mungkin bisa terjadi, seperti input yang melebihi batas, input berupa null, dan sebagainya. Di sisi lain, code coverage 100% tidak selalu menjamin apakah suatu kode sudah berjalan dengan sangat baik dan tidak memiliki bug. Hal ini juga tergantung pada kualitas unit test. Bisa saja terdapat banyak corner case yang belum diuji. Bahkan lebih parahnya lagi, bisa jadi 100% coverage didapat dari unit test yang hanya menjalankan semua fungsi tanpa membuat operasi assert yang benar-benar memvalidasi hasilnya. Maka dari itu, penting untuk kita membuat unit test yang benar-benar menguji semua kemungkinan corner case dan tidak hanya terpaku untuk mencapai 100% code coverage.
-2. Apabila kita membuat sebuah class baru untuk functional test yang ternyata memiliki prosedur setup dan instance variable yang sama dengan class yang sudah ada, maka hal tersebut menjadi redundant. Terlebih jika functional test yang dilakukan hanya memverifikasi jumlah item pada product list, dimana prosesnya adalah membuat (create) produk sebanyak n kali, maka skenario ini sebenarnya masih termasuk dalam scope ```CreateProductFunctionalTest.java``` karena menguji fitur create product. Pembuatan class baru ini juga tidak menerapkan prinsip *code reusability*. Menurut saya, solusi yang tepat adalah tidak perlu membuat class baru. Cukup letakkan test suite  pada class yang sudah ada ( ```CreateProductFunctionalTest.java``` ) dan gunakan prosedur setup dan instance variabel yang sudah ada pada class tersebut.
 
----
-
-# 2️⃣ Modul 2 - CI/CD & DevOps
-
-## 🔗 Link Deployment
-[lab-adpro-lanang.up.railway.app](https://lab-adpro-lanang.up.railway.app/)
-
-## 📋 Reflection
-1. Berikut adalah list code quality issues yang telah saya perbaiki:
-- [**Tests should include assertions java:S2699.**](https://github.com/B-Muhammad-Lanang-2406362860/Modul-1-Coding-Standards/commit/7ac42985301cbb1541bc45c52ebbb8f12537f339) Strategi saya dalam memperbaiki isu ini adalah membuang unit test yang tidak melakukan assertion apa-apa.
-- [**Unnecessary imports should be removed java:S1128**](https://github.com/B-Muhammad-Lanang-2406362860/Modul-1-Coding-Standards/commit/6a96ee9ca9eff5b76cded54d1e96e174c919a5f2) Strategi saya dalam memperbaiki isu ini adalah menghapus dependency yang tidak digunakan.
-- [**Dependencies should be grouped by destinations**](https://github.com/B-Muhammad-Lanang-2406362860/Modul-1-Coding-Standards/commit/8437fa46c548ab76b5ca3b35deb194399db81840) Strategi saya dalam memperbaiki isu ini adalah mengelompokkan dependency-dependency berdasarkan tipe yang sama.
-2. Menurut saya, kode saya telah berhasil mengimplementasikan konsep CI/CD. Saya telah mengimplementasikan konsep CI (Continuous Integration) dengan membuat unit test dan menyusun github workflow sehingga unit test saya secara otomatis akan dieksekusi saat saya melakukan push ke github repository. Saya juga menambahkan plugin sonarcloud, platform code quality analysis yang dapat mendeteksi code issues pada repository saya. Saya juga telah mengimplementasikan CD (Continuous Delivery) dengan menyambungkan github repository saya dengan PaaS Railway. Tiap kali saya melakukan push pada branch main, Railway secara otomatis akan mendeploy aplikasi saya. Link deployment dapat dilihat [disini](https://lab-adpro-lanang.up.railway.app/).
-
-  
----
-
-# 3️⃣ Modul 3 - Maintainability & OO Principles 
-
-## 📋 Reflection 
-1. SOLID principle yang saya terapkan diantaranya:
-    - **Single Responsibility Principle**: Saya melakukan refactoring dengan mengekstrak class CarController keluar dari file ProductController.java ke dalam file tersendiri. Alasannya adalah karena class ProductController seharusnya hanya memiliki hanya satu responsibility yaitu mengelola logika bisnis terkait entitas Product. Dengan demikian, saya telah memenuhi prinsip single responsibility karena telah memastikan setiap class memiliki hanya satu responsibility. 
-    - **Open Closed Principle**: Saya menghapus hubungan inheritance yang tidak relevan pada  class CarController yang sebelumnya mengextends class ProductController. Menurut saya, ProductController tidak dirancang sebagai base class yang **open** untuk diextend oleh CarController. Selain itu, saya merasa tidak ada lagi hal yang dapat dioptimasi dengan prinsip ini dan saya memilih untuk tidak menambahkan abstraksi lain yang tidak diperlukan guna menghindari code smell YAGNI (You Ain't Gonna Need It). 
-    - **Liskov Substitution Principle**: Sebelumnya, class CarController merupakan subclass dari ProductController. Namun, object CarController tidak dapat menggantikan ProductController karena terdapat banyak perbedaan pada kedua class ini, contohnya jenis model attribute (Car vs Product) dan nama method yang berbeda. Untuk itu, saya menghapus hubungan inheritance kedua class tersebut dan membuat masing-masing berdiri sendiri.  
-    - **Interface Segregation Principle**: Saya memisahkan interface CarService menjadi dua interface yang lebih spesifik, yakni ReadOnlyCarService untuk fungsionalitas pembacaan data dan CarManagementService untuk memanipulasi data (create, delete, update). Pemisahan ini menerapkan prinsip interface segregation, membuatnya lebih readable dan controller dapat dengan bebas memilih service yang mana untuk digunakan.  
-    - **Dependency Inversion Principle**: Pada CarController, saya mengubah tipe object service agar merujuk class interface nya (CarManagementService dan ReadOnlyCarService), bukan menunjuk class implementasinya (CarServiceImpl). Hal ini sesuai dengan prinsip Dependency Inversion, yang cenderung mengutamakan suatu modul untuk merujuk abstract class daripada concrete class. 
-
-2. Penerapan SOLID memberikan keuntungan berupa fleksibilitas dan membuat kode lebih maintanable dalam jangka panjang. Contohnya, dengan diterapkannya Interface Segregation Principle, sistem menjadi lebih aman karena komponen hanya memiliki akses ke metode yang memang diperlukan untuk tugasnya. Prinsip-prinsip SOLID meminimalisir risiko munculnya bug saat dilakukan penambahan fitur baru karena setiap komponen telah terisolasi dengan baik berdasarkan fungsinya.
-
-3. Tanpa prinsip SOLID, kode cenderung menjadi kaku dan sulit untuk diubah tanpa menimbulkan efek samping pada bagian lain. Misalnya, jika CarController tetap mewarisi ProductController, perubahan pada ProductController bisa secara tidak sengaja merusak fungsionalitas Car karena adanya hubungan inheritance disana. Selain itu, menumpuk semua fungsi dalam satu interface besar membuatnya jadi tidak readable dan kemungkinan besar tidak maintanable dalam jangka panjang. Kode yang melanggar SRP juga akan membuat satu file menjadi sangat besar dan kompleks, sehingga sulit untuk dipahami dan dilakukan debugging.
+TODO
