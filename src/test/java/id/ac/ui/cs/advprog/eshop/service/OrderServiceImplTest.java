@@ -119,7 +119,7 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindByIdIfIdNotFound() {
-        doReturn(null).when(orderRepository).findById("");
+        doReturn(null).when(orderRepository).findById("zczc");
         assertNull(orderService.findById("zczc"));
     }
 
