@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
         return null;
     };
     @Override
-    public Payment getAllPayments(){
+    public List<Payment> getAllPayments(){
         return null;
     };
 }
