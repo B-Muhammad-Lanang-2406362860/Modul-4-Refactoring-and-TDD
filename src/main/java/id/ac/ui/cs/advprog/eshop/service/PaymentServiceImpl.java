@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData){
         String paymentId = order.getId();
-        if (paymentRepository.findById(paymentId) == null){
+        if (paymentRepository.findById(paymentId) != null){
             Payment payment = new Payment(paymentId, method, paymentData);
             paymentRepository.save(payment);
             return payment;
