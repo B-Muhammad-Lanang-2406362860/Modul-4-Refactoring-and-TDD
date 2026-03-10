@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.InvalidArgumentException;
 
 public class PaymentTest {
 
@@ -49,7 +48,7 @@ public class PaymentTest {
         String method = "BankPayment";
         Payment payment = new Payment(id, method, bankTransferPayment);
 
-        assertThrows(InvalidArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             payment.setStatus("RANDOMAJA");
         });
     }
