@@ -29,25 +29,25 @@ import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentServiceImplTest {
-    
+
     @InjectMocks
     PaymentServiceImpl paymentServiceImpl;
 
     @Mock
-    PaymentRepository paymentRepository;    
-    
+    PaymentRepository paymentRepository;
+
     @Mock
     OrderServiceImpl orderService;
 
     private Map<String, String> bankTransferPayment;
-    
+
     Product product1;
     Order order1;
     Payment payment1, payment2;
-    
+
     @BeforeEach
-    void setUp(){
-        bankTransferPayment = new HashMap<String,String>();
+    void setUp() {
+        bankTransferPayment = new HashMap<String, String>();
         bankTransferPayment.put("bankName", "BRI");
         bankTransferPayment.put("referenceCode", "ADPRO123");
 
@@ -66,7 +66,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    void testAddPayment(){
+    void testAddPayment() {
         doReturn(null).when(paymentRepository).findById(order1.getId());
         doReturn(payment1).when(paymentRepository).save(any(Payment.class));
 
@@ -78,7 +78,7 @@ public class PaymentServiceImplTest {
         assertEquals(payment1.getStatus(), payment.getStatus());
     }
 
-    @Test 
+    @Test
     void testAddPaymentIfAlreadyExist() {
         doReturn(payment1).when(paymentRepository).findById(order1.getId());
 
@@ -88,8 +88,8 @@ public class PaymentServiceImplTest {
         verify(paymentRepository, times(0)).save(any(Payment.class));
     }
 
-    @Test 
-    void testSetStatusSuccess(){
+    @Test
+    void testSetStatusSuccess() {
         doReturn(payment1).when(paymentRepository).findById(payment1.getId());
         payment1.setStatus("SUCCESS");
         doReturn(payment1).when(paymentRepository).save(any(Payment.class));
@@ -105,8 +105,8 @@ public class PaymentServiceImplTest {
         verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 
-    @Test 
-    void testSetStatusRejected(){
+    @Test
+    void testSetStatusRejected() {
         doReturn(payment1).when(paymentRepository).findById(payment1.getId());
         payment1.setStatus("REJECTED");
         doReturn(payment1).when(paymentRepository).save(any(Payment.class));
@@ -122,10 +122,10 @@ public class PaymentServiceImplTest {
         verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 
-    @Test 
-    void testSetStatusIfStatusInvalid(){
+    @Test
+    void testSetStatusIfStatusInvalid() {
         doReturn(payment1).when(paymentRepository).findById(payment1.getId());
-        
+
         assertThrows(IllegalArgumentException.class, () -> {
             paymentServiceImpl.setStatus(payment1, "ADALAHPOKOKNYA");
         });
@@ -133,8 +133,8 @@ public class PaymentServiceImplTest {
         verify(orderService, times(0)).updateStatus(anyString(), anyString());
     }
 
-    @Test 
-    void testSetStatusIfPaymentInvalid(){
+    @Test
+    void testSetStatusIfPaymentInvalid() {
         doReturn(null).when(paymentRepository).findById(payment1.getId());
 
         Payment payment = paymentServiceImpl.setStatus(payment1, PaymentStatus.REJECTED.getValue());
@@ -178,12 +178,13 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    void testAddPaymentByVoucher(){
-        Map<String, String> voucherCodePayment = new HashMap<String,String>();
+    void testAddPaymentByVoucher() {
+        Map<String, String> voucherCodePayment = new HashMap<String, String>();
         voucherCodePayment.put("voucherCode", "ESHOP1234ABC5678");
         Payment successfullVoucherPayment = new Payment("12345", "VoucherCode", voucherCodePayment);
 
-        doReturn(null).when(paymentRepository).findById(anyString());
+        doReturn(null)
+                .doReturn(successfullVoucherPayment).when(paymentRepository).findById(anyString());
         doReturn(successfullVoucherPayment).when(paymentRepository).save(any(Payment.class));
         doReturn(null).when(orderService).updateStatus(anyString(), anyString());
 
@@ -193,17 +194,18 @@ public class PaymentServiceImplTest {
         assertEquals(successfullVoucherPayment.getMethod(), payment.getMethod());
         assertEquals(successfullVoucherPayment.getPaymentData(), payment.getPaymentData());
         assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
-        
+
         verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 
     @Test
-    void testAddPaymentByVoucherInvalid(){
-        Map<String, String>  voucherCodePayment = new HashMap<String,String>();
+    void testAddPaymentByVoucherInvalid() {
+        Map<String, String> voucherCodePayment = new HashMap<String, String>();
         voucherCodePayment.put("voucherCode", "gak valid lah intinya");
         Payment rejectedVoucherPayment = new Payment("12345", "VoucherCode", voucherCodePayment);
 
-        doReturn(null).when(paymentRepository).findById(anyString());
+        doReturn(null)
+                .doReturn(rejectedVoucherPayment).when(paymentRepository).findById(anyString());
         doReturn(rejectedVoucherPayment).when(paymentRepository).save(any(Payment.class));
         doReturn(null).when(orderService).updateStatus(anyString(), anyString());
 
@@ -213,7 +215,7 @@ public class PaymentServiceImplTest {
         assertEquals(rejectedVoucherPayment.getMethod(), payment.getMethod());
         assertEquals(rejectedVoucherPayment.getPaymentData(), payment.getPaymentData());
         assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
-        
-        verify(orderService, times(0)).updateStatus(anyString(), anyString());
+
+        verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
 }
