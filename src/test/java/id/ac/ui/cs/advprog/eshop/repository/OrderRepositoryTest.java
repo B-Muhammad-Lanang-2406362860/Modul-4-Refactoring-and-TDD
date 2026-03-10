@@ -13,14 +13,15 @@ import org.junit.jupiter.api.Test;
 import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Product;
+import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 
 public class OrderRepositoryTest {
-    OrderRepository OrderRepository;
+    OrderRepository orderRepository;
     List<Order> orders;
 
     @BeforeEach
     void setUp() {
-        OrderRepository = new OrderRepository();
+        orderRepository = new OrderRepository();
         List<Product> products = new ArrayList<>();
         Product product1 = new Product();
         product1.setProductId("e1e632fa-085d-4320-ad66-6c719315627b");
@@ -43,9 +44,9 @@ public class OrderRepositoryTest {
     @Test
     void testSaveCreate() {
         Order order = orders.get(1);
-        Order result = OrderRepository.save(order);
+        Order result = orderRepository.save(order);
 
-        Order findResult = OrderRepository.findById(orders.get(1).getId());
+        Order findResult = orderRepository.findById(orders.get(1).getId());
 
         assertEquals(order.getId(), result.getId());
         assertEquals(order.getId(), findResult.getId());
@@ -57,13 +58,13 @@ public class OrderRepositoryTest {
     @Test
     void testSaveUpdate() {
         Order order = orders.get(1);
-        OrderRepository.save(order);
+        orderRepository.save(order);
         Order newOrder = new Order(order.getId(), order.getProducts(), order.getOrderTime(), 
             order.getAuthor(), OrderStatus.SUCCESS.getValue())
 
-        Order result = OrderRepository.save(order);
+        Order result = orderRepository.save(order);
 
-        Order findResult = OrderRepository.findById(orders.get(1).getId());
+        Order findResult = orderRepository.findById(orders.get(1).getId());
         assertEquals(order.getId(), result.getId());
         assertEquals(order.getId(), findResult.getId());
         assertEquals(order.getOrderTime(), findResult.getOrderTime());
@@ -77,7 +78,7 @@ public class OrderRepositoryTest {
             orderRepository.save(order);
         }
 
-        Order findResult = OrderRepository.findById(orders.get(1).getId());
+        Order findResult = orderRepository.findById(orders.get(1).getId());
         assertEquals(order.get(1).getId(), findResult.getId());
         assertEquals(order.get(1).getOrderTime(), findResult.getOrderTime());
         assertEquals(order.get(1).getAuthor(), findResult.getAuthor());
@@ -90,7 +91,7 @@ public class OrderRepositoryTest {
             orderRepository.save(order);
         }
 
-        Order findResult = OrderRepository.findById("zczc");
+        Order findResult = orderRepository.findById("zczc");
         assertNull(findResult);
     }
 
