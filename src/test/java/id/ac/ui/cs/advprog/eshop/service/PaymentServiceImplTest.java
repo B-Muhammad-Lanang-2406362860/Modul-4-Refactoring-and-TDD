@@ -218,4 +218,48 @@ public class PaymentServiceImplTest {
 
         verify(orderService, times(1)).updateStatus(anyString(), anyString());
     }
+
+    @Test
+    void testAddPaymentByBankTransfer() {
+        Map<String, String> bankTransferPayment = new HashMap<String, String>();
+        bankTransferPayment.put("bankName", "BRI");
+        bankTransferPayment.put("referenceCode", "kdaslfhaslkdf");
+        Payment successfullBankTransferPayment = new Payment("12345", "BankTransferCode", bankTransferPayment);
+
+        doReturn(null)
+                .doReturn(successfullBankTransferPayment).when(paymentRepository).findById(anyString());
+        doReturn(successfullBankTransferPayment).when(paymentRepository).save(any(Payment.class));
+        doReturn(null).when(orderService).updateStatus(anyString(), anyString());
+
+        Payment payment = paymentServiceImpl.addPayment(order1, "BankTransferCode", bankTransferPayment);
+
+        assertEquals(successfullBankTransferPayment.getId(), payment.getId());
+        assertEquals(successfullBankTransferPayment.getMethod(), payment.getMethod());
+        assertEquals(successfullBankTransferPayment.getPaymentData(), payment.getPaymentData());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
+
+        verify(orderService, times(1)).updateStatus(anyString(), anyString());
+    }
+
+    @Test
+    void testAddPaymentByBankTransferInvalid() {
+        Map<String, String> bankTransferPayment = new HashMap<String, String>();
+        bankTransferPayment.put("bankName", "BRI");
+        bankTransferPayment.put("referenceCode", "");
+        Payment failedBankTransferPayment = new Payment("12345", "BankTransferCode", bankTransferPayment);
+
+        doReturn(null)
+                .doReturn(failedBankTransferPayment).when(paymentRepository).findById(anyString());
+        doReturn(failedBankTransferPayment).when(paymentRepository).save(any(Payment.class));
+        doReturn(null).when(orderService).updateStatus(anyString(), anyString());
+
+        Payment payment = paymentServiceImpl.addPayment(order1, "BankTransferCode", bankTransferPayment);
+
+        assertEquals(failedBankTransferPayment.getId(), payment.getId());
+        assertEquals(failedBankTransferPayment.getMethod(), payment.getMethod());
+        assertEquals(failedBankTransferPayment.getPaymentData(), payment.getPaymentData());
+        assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
+
+        verify(orderService, times(1)).updateStatus(anyString(), anyString());
+    }
 }
