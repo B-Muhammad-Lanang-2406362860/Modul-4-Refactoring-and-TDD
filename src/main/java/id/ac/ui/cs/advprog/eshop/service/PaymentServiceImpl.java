@@ -38,6 +38,14 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 payment = setStatus(payment, PaymentStatus.REJECTED.getValue());
             }
+        } else if (isBankTransferPayment(paymentData)){
+            String bankName = paymentData.get("bankName");
+            String referenceCode = paymentData.get("referenceCode");
+            if (isValidBankInformation(bankName, referenceCode)){
+                payment = setStatus(payment, PaymentStatus.SUCCESS.getValue());
+            } else {
+                payment = setStatus(payment, PaymentStatus.REJECTED.getValue());
+            }
         }
 
         return payment;
@@ -55,6 +63,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (voucherCode.chars().filter(c -> Character.isDigit(c)).count() != 8) return false;
         return true;
     }
+
+    private boolean isBankTransferPayment(Map<String, String> paymentData) {
+        boolean haveBankName = paymentData.containsKey("bankName");
+        boolean haveReferenceCode = paymentData.containsKey("referenceCode");
+        return haveBankName && haveReferenceCode;
+    }
+
+    private boolean isValidBankInformation(String bankName, String referenceCode){
+        return bankName != null && !bankName.equals("") && referenceCode != null && !referenceCode.equals("");
+    }
+
 
     @Override
     public Payment setStatus(Payment payment, String status) {
