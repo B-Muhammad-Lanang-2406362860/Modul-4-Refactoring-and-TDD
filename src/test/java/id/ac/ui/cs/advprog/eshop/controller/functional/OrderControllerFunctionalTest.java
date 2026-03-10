@@ -2,7 +2,7 @@ package id.ac.ui.cs.advprog.eshop.controller.functional;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.service.OrderService;
-import id.ac.ui.cs.advprog.eshop.service.OrderServiceImpl;
+import id.ac.ui.cs.advprog.eshop.service.PaymentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,7 +34,7 @@ class OrderControllerFunctionalTest {
     private OrderService orderService;
 
     @MockBean
-    private OrderServiceImpl orderServiceImpl;
+    private PaymentServiceImpl paymentServiceImpl;
 
     @Test
     void getCreateOrderPageShouldReturnOrderCreateView() throws Exception {
